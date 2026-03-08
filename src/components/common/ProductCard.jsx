@@ -23,7 +23,7 @@ const ProductCard = ({ product, handleFavPress, isFav }) => {
 
     return (
         <View style={styles.card}>
-            <TouchableOpacity style={styles.favIcon} onPress={() => handleFavPress(product)}>
+            <TouchableOpacity style={styles.favIcon} onPress={() => handleFavPress?.(product)}>
                 <Icon name={isFav ? "heart" : "heart-outline"} size={28} color="#fa606d" />
             </TouchableOpacity>
             <TouchableOpacity

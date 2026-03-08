@@ -11,11 +11,12 @@ import {
 
 import { SafeAreaView } from "react-native-safe-area-context";
 import Icon from "react-native-vector-icons/Ionicons";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigation } from "@react-navigation/native";
 
 import ProductCard from "../../components/common/ProductCard";
 import ProductFilterModal from "../../components/filters/ProductFilterModal";
+import { addToWishlist, removeFromWishlist } from "../../redux/slices/wishlistSlice";
 
 const { width } = Dimensions.get("window");
 const CARD_WIDTH = (width - 24) / 2;
@@ -42,6 +43,8 @@ const ProductListing = ({ route }) => {
     const [tempPrice, setTempPrice] = useState(null);
     const [tempCategory, setTempCategory] = useState(categoryParam);
     const [tempBadge, setTempBadge] = useState(badgeParam);
+    const dispatch = useDispatch();
+    const wishlist = useSelector((state) => state.wishlist.items);
 
     /* FILTER PRODUCTS */
 
@@ -54,6 +57,16 @@ const ProductListing = ({ route }) => {
             p.productName.toLowerCase().includes(categoryFilter.toLowerCase())
         );
     }
+
+    const handleFavPress = (product) => {
+        const exists = wishlist.some(item => item.id === product.id);
+
+        if (exists) {
+            dispatch(removeFromWishlist(product.id));
+        } else {
+            dispatch(addToWishlist(product));
+        }
+    };
 
     /* BADGE FILTER */
 
@@ -110,9 +123,15 @@ const ProductListing = ({ route }) => {
     };
 
     const renderItem = ({ item }) => {
+        const isFav = wishlist.some(p => p.id === item.id);
+
         return (
             <View style={{ width: CARD_WIDTH }}>
-                <ProductCard product={item} />
+                <ProductCard
+                    product={item}
+                    handleFavPress={handleFavPress}
+                    isFav={isFav}
+                />
             </View>
         );
     };
@@ -202,6 +221,7 @@ const ProductListing = ({ route }) => {
                 renderItem={renderItem}
                 keyExtractor={(item) => item.id.toString()}
                 numColumns={2}
+                extraData={wishlist}
                 showsVerticalScrollIndicator={false}
                 columnWrapperStyle={styles.row}
                 contentContainerStyle={styles.list}
