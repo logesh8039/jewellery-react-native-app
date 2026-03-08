@@ -1,6 +1,6 @@
 # 💎 Jewellery React Native App
 
-![App Preview](screenshots/HomePage.jpg)
+![App Preview](screenshots/JewelleryApp-Preview.png)
 
 A modern **Jewellery Shopping Mobile Application** built using **React Native** and **Firebase Authentication**.
 The app allows users to browse jewellery products, view details, add items to wishlist and cart, and manage their profile.
