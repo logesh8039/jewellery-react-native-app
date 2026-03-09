@@ -13,8 +13,8 @@ import { useNavigation } from "@react-navigation/native";
 import Feather from "react-native-vector-icons/Feather";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { useAuth } from "../../contexts/AuthContext";
-import { signOut } from "firebase/auth";
-import { FIREBASE_AUTH } from "../../auth/firebaseConfig";
+import auth from "@react-native-firebase/auth";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 
 const Profile = () => {
     const navigation = useNavigation();
@@ -29,10 +29,18 @@ const Profile = () => {
                 onPress: async () => {
                     try {
                         setLoading(true);
-                        await signOut(FIREBASE_AUTH);
-                        setSignedInUser(null);
+
+                        // Remove Google permission
+                        await GoogleSignin.revokeAccess().catch(() => { });
+
+                        // Remove Google session
+                        await GoogleSignin.signOut().catch(() => { });
+
+                        // Firebase logout
+                        await auth().signOut();
+
                     } catch (err) {
-                        console.log(err);
+                        console.log("Logout Error:", err);
                     } finally {
                         setLoading(false);
                     }

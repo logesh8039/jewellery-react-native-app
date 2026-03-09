@@ -74,7 +74,13 @@ const SignUp = () => {
                 displayName: username
             });
 
-            setSignedInUser(res.user);
+            // 🔹 Refresh user profile
+            await res.user.reload();
+
+            const updatedUser = auth().currentUser;
+
+            setSignedInUser(updatedUser);
+
         } catch (err) {
             switch (err.code) {
                 case "auth/email-already-in-use":

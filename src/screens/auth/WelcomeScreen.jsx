@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { GoogleSignin, statusCodes } from "@react-native-google-signin/google-signin";
-import auth, { GoogleAuthProvider } from "@react-native-firebase/auth";
+import auth from "@react-native-firebase/auth";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 const { height } = Dimensions.get("window");
@@ -67,8 +67,6 @@ const WelcomeScreen = () => {
     }, [badgeFade, fadeAnim, slideAnim, buttonSlide]);
 
     const googleLogin = async () => {
-        if (loading) return;
-
         try {
             setLoading(true);
 
@@ -76,21 +74,20 @@ const WelcomeScreen = () => {
                 showPlayServicesUpdateDialog: true
             });
 
+            // Optional: show account picker every time
+            await GoogleSignin.signOut();
+
             const userInfo = await GoogleSignin.signIn();
 
-            const googleCredential = GoogleAuthProvider.credential(userInfo.idToken);
+            const { idToken } = await GoogleSignin.getTokens();
+
+            const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
             await auth().signInWithCredential(googleCredential);
+
         } catch (error) {
-            if (error?.code === statusCodes.SIGN_IN_CANCELLED) {
-                alert("Sign-in cancelled");
-            } else if (error?.code === statusCodes.IN_PROGRESS) {
-                alert("Sign-in already in progress");
-            } else if (error?.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-                alert("Play services not available");
-            } else {
-                alert("Sign-in failed");
-            }
+            console.log("Google SignIn Error:", error);
+            alert(error.message);
         } finally {
             setLoading(false);
         }

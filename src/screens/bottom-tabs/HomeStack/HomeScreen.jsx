@@ -12,9 +12,10 @@ import SectionHeader from '../../../components/common/SectionHeader';
 import HorizontalCardList from '../../../components/common/HorizontalCardList';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { addToWishlist, removeFromWishlist } from '../../../redux/slices/wishlistSlice';
+import { ActivityIndicator } from 'react-native-paper';
 
 const HomeScreen = () => {
-    const { loggedInUser } = useAuth();
+    const { loggedInUser, authLoading } = useAuth();
 
     const products = useSelector((state) => state?.product?.products || []);
     const productCategories = useSelector((state) => state?.product?.productCategories || []);
@@ -53,6 +54,14 @@ const HomeScreen = () => {
             product?.productBadge.toLowerCase().includes(badge.toLowerCase())
         );
     };
+
+    if (authLoading) {
+        return (
+            <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <ActivityIndicator size="large" />
+            </SafeAreaView>
+        );
+    }
 
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: "#f0f0f0" }}>
